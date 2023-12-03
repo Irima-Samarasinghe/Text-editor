@@ -85,7 +85,7 @@
             </button>
         </li>
         <li>
-            <button type="button" onclick="applyformat('justifyFull')">
+            <button type="button" onclick="applyformat('justifyJustify')">
                 <img src="./Resources/justify.png" alt="align-justify">
             </button>
         </li>
@@ -109,16 +109,30 @@
         let historyIndex = -1;
 
         function saveState() {
+            const currentState = {
+                content: textarea.innerHTML,
+                styles: {
+                    textAlign: textarea.style.textAlign,
+                    fontWeight: textarea.style.fontWeight,
+                    fontStyle: textarea.style.fontStyle,
+                    textDecoration: textarea.style.textDecoration,
+                    color: textarea.style.color,
+                    // Add more styles as needed
+                },
+            };
+
             history = history.slice(0, historyIndex + 1);
-            history.push(textarea.innerHTML);
+            history.push(currentState);
             historyIndex++;
         }
 
-
         function applyformat(command, value = null) {
+            saveState();
+
             if (command.startsWith('justify')) {
-                textarea.focus=true;
-                document.execCommand(command, false, value);
+                textarea.focus = true;
+                // document.execCommand(command, false, value);
+                textarea.style.textAlign = command.replace('justify', '').toLowerCase();
             } else {
                 document.execCommand(command, false, value);
             }
@@ -126,21 +140,34 @@
 
         function undo() {
             if (historyIndex > 0) {
-                if(historyIndex > 0){
-                    historyIndex--;
-                }
-                textarea.innerHTML = history[historyIndex];
+                historyIndex--;
+                const prevState = history[historyIndex];
+                applyState(prevState);
             }
         }
 
         function redo() {
             if (historyIndex < history.length - 1) {
                 historyIndex++;
-                textarea.innerHTML = history[historyIndex];
+                const nextState = history[historyIndex];
+                applyState(nextState);
             }
         }
 
+        function applyState(state) {
+            textarea.innerHTML = state.content;
+
+            // Apply styles
+            textarea.style.textAlign = state.styles.textAlign;
+            textarea.style.fontWeight = state.styles.fontWeight;
+            textarea.style.fontStyle = state.styles.fontStyle;
+            textarea.style.textDecoration = state.styles.textDecoration;
+            textarea.style.color = state.styles.color;
+            // Apply more styles as needed
+        }
+
         textarea.addEventListener('input', saveState);
+
     </script>
 
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
@@ -155,4 +182,5 @@
         crossorigin="anonymous"></script>
 </body>
 <!-- Author:Nadee.M.S.I | CT/2019/053-->
+
 </html>
