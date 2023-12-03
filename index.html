@@ -69,22 +69,22 @@
             <input type="color" id="color-picker-input" >
         </li>
         <li>
-            <button type="button" >
+            <button type="button" onclick="applyformat('justifyLeft')">
                 <img src="./Resources/left.png" alt="align-left">
             </button>
         </li>
         <li>
-            <button type="button">
+            <button type="button" onclick="applyformat('justifyCenter')">
                 <img src="./Resources/center.png" alt="center">
             </button>
         </li>
         <li>
-            <button type="button">
+            <button type="button" onclick="applyformat('justifyRight')">
                 <img src="./Resources/right.png" alt="align-right">
             </button>
         </li>
         <li>
-            <button type="button">
+            <button type="button" onclick="applyformat('justifyJustify')">
                 <img src="./Resources/justify.png" alt="align-justify">
             </button>
         </li>
@@ -106,8 +106,15 @@
 
 
         function applyformat(command, value = null) {
-            
-            document.execCommand(command, false, value);
+            var textarea = document.getElementById('textarea');
+
+           
+            if (command.startsWith('justify')) {
+                textarea.focus=true;
+                textarea.style.textAlign = command.replace('justify', '').toLowerCase();
+            } else {
+                document.execCommand(command, false, value);
+            }
         }
     </script>
 
