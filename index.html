@@ -38,6 +38,7 @@
         #textarea {
             margin: auto;
             margin-top: 30px;
+            padding: 10px;
             width: 900px;
             height: 500px;
             border: 1px solid #ccc;
@@ -61,40 +62,40 @@
             </button>
         </li>
         <li>
-            <button type="button">
+            <button type="button" onclick="applyformat('italic')">
                 <img src="./Resources/italic-xxl.png" alt="italic">
             </button>
         </li>
         <li>
-            <input type="color" id="color-picker-input" >
+            <input type="color" id="color-picker-input" onchange="applyformat('foreColor', this.value)">
         </li>
         <li>
-            <button type="button" >
+            <button type="button" onclick="applyformat('justifyLeft')">
                 <img src="./Resources/left.png" alt="align-left">
             </button>
         </li>
         <li>
-            <button type="button">
+            <button type="button" onclick="applyformat('justifyCenter')">
                 <img src="./Resources/center.png" alt="center">
             </button>
         </li>
         <li>
-            <button type="button">
+            <button type="button" onclick="applyformat('justifyRight')">
                 <img src="./Resources/right.png" alt="align-right">
             </button>
         </li>
         <li>
-            <button type="button">
+            <button type="button" onclick="applyformat('justifyFull')">
                 <img src="./Resources/justify.png" alt="align-justify">
             </button>
         </li>
         <li>
-            <button type="button">
+            <button type="button" onclick="undo()">
                 <img src="./Resources/undo-4-32.png" alt="undo">
             </button>
         </li>
         <li>
-            <button type="button">
+            <button type="button" onclick="redo()">
                 <img src="./Resources/action-redo-32.png" alt="redo">
             </button>
         </li>
@@ -104,11 +105,42 @@
     <script type="text/javascript">
         let textarea = document.getElementById("textarea");
 
+        let history = [];
+        let historyIndex = -1;
+
+        function saveState() {
+            history = history.slice(0, historyIndex + 1);
+            history.push(textarea.innerHTML);
+            historyIndex++;
+        }
+
 
         function applyformat(command, value = null) {
-            
-            document.execCommand(command, false, value);
+            if (command.startsWith('justify')) {
+                textarea.focus=true;
+                document.execCommand(command, false, value);
+            } else {
+                document.execCommand(command, false, value);
+            }
         }
+
+        function undo() {
+            if (historyIndex > 0) {
+                if(historyIndex > 0){
+                    historyIndex--;
+                }
+                textarea.innerHTML = history[historyIndex];
+            }
+        }
+
+        function redo() {
+            if (historyIndex < history.length - 1) {
+                historyIndex++;
+                textarea.innerHTML = history[historyIndex];
+            }
+        }
+
+        textarea.addEventListener('input', saveState);
     </script>
 
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
